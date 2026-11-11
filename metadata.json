@@ -1,0 +1,8 @@
+{
+  "name": "Remix Metaloespo",
+  "description": "Imported from GitHub: albertometaloespo-lang/Metaloespo",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

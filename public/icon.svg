@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" rx="128" fill="#0f172a"/>
+  <!-- Helmet icon centered -->
+  <g transform="translate(64, 64) scale(0.75)">
+    <circle cx="256" cy="256" r="220" fill="#1e293b"/>
+    <path d="M120 280 C120 180, 200 120, 256 120 C312 120, 392 180, 392 280 L420 280 C428 280, 436 288, 436 296 L436 312 C436 320, 428 328, 420 328 L92 328 C84 328, 76 320, 76 312 L76 296 C76 288, 84 280, 92 280 Z" fill="#f59e0b"/>
+    <path d="M236 120 L276 120 L276 280 L236 280 Z" fill="#d97706"/>
+    <rect x="180" y="150" width="16" height="130" rx="8" fill="#fbbf24"/>
+    <rect x="316" y="150" width="16" height="130" rx="8" fill="#fbbf24"/>
+    <!-- Small clock icon badge -->
+    <circle cx="350" cy="350" r="70" fill="#0f172a" stroke="#f59e0b" stroke-width="12"/>
+    <polyline points="350,310 350,350 380,365" fill="none" stroke="#f59e0b" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>
