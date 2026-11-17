@@ -65,6 +65,49 @@ export const DailyLogView: React.FC<DailyLogViewProps> = ({
   // Mapa rápido de obras
   const obrasMap = new Map(obras.map((o) => [o.id, o]));
 
+  // VISTA DO COLABORADOR SEM PERFIL SELECIONADO
+  if (userRole === 'colaborador' && !currentWorker) {
+    return (
+      <div className="space-y-4 pb-24">
+        <div className="p-8 rounded-3xl bg-white border border-dashed border-slate-200 text-center space-y-3">
+          <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto">
+            <UserCheck className="w-6 h-6" />
+          </div>
+          <div>
+            <h3 className="text-base font-bold text-slate-800">
+              {colaboradores.length === 0
+                ? 'Sem colaboradores registados'
+                : 'Iniciar Sessão de Colaborador'}
+            </h3>
+            <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+              {colaboradores.length === 0
+                ? 'Não existem colaboradores cadastrados na aplicação. Aceda à área de administração para criar a equipa.'
+                : 'Selecione o seu nome e insira o seu PIN para aceder ao registo de horas.'}
+            </p>
+          </div>
+          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-2">
+            {colaboradores.length > 0 && onSwitchAccount && (
+              <button
+                type="button"
+                onClick={onSwitchAccount}
+                className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-sm transition-transform active:scale-95 cursor-pointer"
+              >
+                Entrar com PIN
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={onPromptAdmin}
+              className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-sm transition-transform active:scale-95 cursor-pointer"
+            >
+              Aceder como Administrador
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // VISTA DEDICADA DO COLABORADOR: Quando um colaborador individual está autenticado
   if (userRole === 'colaborador' && currentWorker) {
     const workerRegistos = dayRegistos.filter((r) => r.colaboradorId === currentWorker.id);
@@ -598,7 +641,20 @@ export const DailyLogView: React.FC<DailyLogViewProps> = ({
           </div>
 
           <div className="space-y-3">
-            {displayedColaboradores.map((colaborador) => {
+            {displayedColaboradores.length === 0 ? (
+              <div className="p-8 rounded-2xl bg-white border border-dashed border-slate-200 text-center space-y-3">
+                <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
+                  <Users className="w-6 h-6" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-slate-800">Sem colaboradores registados</p>
+                  <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+                    Aceda ao menu <strong className="text-slate-800">Equipa</strong> para cadastrar os colaboradores da empresa e começar a registar horas.
+                  </p>
+                </div>
+              </div>
+            ) : (
+              displayedColaboradores.map((colaborador) => {
               const colRegistos = dayRegistos.filter((r) => r.colaboradorId === colaborador.id);
               const colNormais = colRegistos.reduce((a, b) => a + (b.horasNormais || 0), 0);
               const colExtra = colRegistos.reduce((a, b) => a + (b.horasExtra || 0), 0);
@@ -735,7 +791,8 @@ export const DailyLogView: React.FC<DailyLogViewProps> = ({
                   )}
                 </div>
               );
-            })}
+            })
+          )}
           </div>
         </div>
       )}

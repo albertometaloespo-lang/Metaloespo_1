@@ -1,18 +1,18 @@
 import { Colaborador, Obra, RegistoHoras, GoogleSyncConfig, ValidacaoDia } from '../types';
 
 const STORAGE_KEYS = {
-  COLABORADORES: 'obratempo_colaboradores_v1',
-  OBRAS: 'obratempo_obras_v1',
-  REGISTOS: 'obratempo_registos_v2',
+  COLABORADORES: 'obratempo_colaboradores_v3',
+  OBRAS: 'obratempo_obras_v3',
+  REGISTOS: 'obratempo_registos_v3',
   SYNC_CONFIG: 'obratempo_sync_config_v1',
-  VALIDACOES: 'obratempo_validacoes_v2',
+  VALIDACOES: 'obratempo_validacoes_v3',
   ADMIN_PIN: 'obratempo_admin_pin_v1',
   ADMIN_MODE: 'obratempo_admin_mode_v1',
   CURRENT_WORKER_ID: 'obratempo_current_worker_id_v1',
-  CLEANUP_FLAG: 'obratempo_registos_wiped_v2',
+  CLEANUP_FLAG: 'obratempo_user_clean_slate_v3',
 };
 
-// Dados realistas de colaboradores para a empresa
+// Dados opcionais de demonstração (apenas carregados se solicitado explicitamente pelo utilizador)
 const SEED_COLABORADORES: Colaborador[] = [
   {
     id: 'col-1',
@@ -21,7 +21,7 @@ const SEED_COLABORADORES: Colaborador[] = [
     contacto: '914 220 311',
     ativo: true,
     horasBaseDia: 8,
-    cor: '#2563eb', // Blue
+    cor: '#2563eb',
     pin: '1001',
   },
   {
@@ -31,7 +31,7 @@ const SEED_COLABORADORES: Colaborador[] = [
     contacto: '963 881 204',
     ativo: true,
     horasBaseDia: 8,
-    cor: '#ea580c', // Orange
+    cor: '#ea580c',
     pin: '1002',
   },
   {
@@ -41,7 +41,7 @@ const SEED_COLABORADORES: Colaborador[] = [
     contacto: '931 554 902',
     ativo: true,
     horasBaseDia: 8,
-    cor: '#16a34a', // Green
+    cor: '#16a34a',
     pin: '1003',
   },
   {
@@ -51,7 +51,7 @@ const SEED_COLABORADORES: Colaborador[] = [
     contacto: '928 114 773',
     ativo: true,
     horasBaseDia: 8,
-    cor: '#9333ea', // Purple
+    cor: '#9333ea',
     pin: '1004',
   },
   {
@@ -61,7 +61,7 @@ const SEED_COLABORADORES: Colaborador[] = [
     contacto: '919 403 662',
     ativo: true,
     horasBaseDia: 8,
-    cor: '#0891b2', // Cyan
+    cor: '#0891b2',
     pin: '1005',
   },
   {
@@ -71,7 +71,7 @@ const SEED_COLABORADORES: Colaborador[] = [
     contacto: '965 229 118',
     ativo: true,
     horasBaseDia: 8,
-    cor: '#ca8a04', // Amber
+    cor: '#ca8a04',
     pin: '1006',
   },
 ];
@@ -119,12 +119,24 @@ const SEED_OBRAS: Obra[] = [
   },
 ];
 
-// Limpeza imediata de todos os registos existentes solicitada pelo utilizador
+// Limpeza completa solicitada pelo utilizador: registos, colaboradores e obras vazios
 try {
   if (typeof window !== 'undefined' && window.localStorage) {
     if (!localStorage.getItem(STORAGE_KEYS.CLEANUP_FLAG)) {
       localStorage.removeItem('obratempo_registos_v1');
+      localStorage.removeItem('obratempo_registos_v2');
+      localStorage.removeItem('obratempo_registos_v3');
       localStorage.removeItem('obratempo_validacoes_v1');
+      localStorage.removeItem('obratempo_validacoes_v2');
+      localStorage.removeItem('obratempo_validacoes_v3');
+      localStorage.removeItem('obratempo_colaboradores_v1');
+      localStorage.removeItem('obratempo_colaboradores_v2');
+      localStorage.removeItem('obratempo_obras_v1');
+      localStorage.removeItem('obratempo_obras_v2');
+      localStorage.removeItem(STORAGE_KEYS.CURRENT_WORKER_ID);
+
+      localStorage.setItem(STORAGE_KEYS.COLABORADORES, JSON.stringify([]));
+      localStorage.setItem(STORAGE_KEYS.OBRAS, JSON.stringify([]));
       localStorage.setItem(STORAGE_KEYS.REGISTOS, JSON.stringify([]));
       localStorage.setItem(STORAGE_KEYS.VALIDACOES, JSON.stringify({}));
       localStorage.setItem(STORAGE_KEYS.CLEANUP_FLAG, 'true');
@@ -138,11 +150,11 @@ export const StorageService = {
   getColaboradores(): Colaborador[] {
     const raw = localStorage.getItem(STORAGE_KEYS.COLABORADORES);
     if (!raw) {
-      this.saveColaboradores(SEED_COLABORADORES);
-      return SEED_COLABORADORES;
+      return [];
     }
     try {
       const parsed: Colaborador[] = JSON.parse(raw);
+      if (!Array.isArray(parsed)) return [];
       // Assegurar que todos os colaboradores têm PIN definido
       let updated = false;
       const verified = parsed.map((c, idx) => {
@@ -157,7 +169,7 @@ export const StorageService = {
       }
       return verified;
     } catch {
-      return SEED_COLABORADORES;
+      return [];
     }
   },
 
@@ -180,13 +192,13 @@ export const StorageService = {
   getObras(): Obra[] {
     const raw = localStorage.getItem(STORAGE_KEYS.OBRAS);
     if (!raw) {
-      this.saveObras(SEED_OBRAS);
-      return SEED_OBRAS;
+      return [];
     }
     try {
-      return JSON.parse(raw);
+      const parsed: Obra[] = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
     } catch {
-      return SEED_OBRAS;
+      return [];
     }
   },
 
@@ -213,9 +225,24 @@ export const StorageService = {
 
   clearAllRegistos(): void {
     localStorage.removeItem('obratempo_registos_v1');
+    localStorage.removeItem('obratempo_registos_v2');
+    localStorage.removeItem('obratempo_registos_v3');
     localStorage.removeItem('obratempo_validacoes_v1');
+    localStorage.removeItem('obratempo_validacoes_v2');
+    localStorage.removeItem('obratempo_validacoes_v3');
     localStorage.setItem(STORAGE_KEYS.REGISTOS, JSON.stringify([]));
     localStorage.setItem(STORAGE_KEYS.VALIDACOES, JSON.stringify({}));
+  },
+
+  clearColaboradoresEObras(): void {
+    localStorage.setItem(STORAGE_KEYS.COLABORADORES, JSON.stringify([]));
+    localStorage.setItem(STORAGE_KEYS.OBRAS, JSON.stringify([]));
+    localStorage.removeItem(STORAGE_KEYS.CURRENT_WORKER_ID);
+  },
+
+  clearAllData(): void {
+    this.clearAllRegistos();
+    this.clearColaboradoresEObras();
   },
 
   getSyncConfig(): GoogleSyncConfig {
@@ -290,10 +317,14 @@ export const StorageService = {
     localStorage.setItem(STORAGE_KEYS.ADMIN_MODE, mode ? 'true' : 'false');
   },
 
+  loadDemoData(): void {
+    this.saveColaboradores(SEED_COLABORADORES);
+    this.saveObras(SEED_OBRAS);
+    this.saveRegistos([]);
+    this.saveAllValidacoes({});
+  },
+
   resetAllData(): void {
-    localStorage.removeItem(STORAGE_KEYS.COLABORADORES);
-    localStorage.removeItem(STORAGE_KEYS.OBRAS);
-    localStorage.setItem(STORAGE_KEYS.REGISTOS, JSON.stringify([]));
-    localStorage.setItem(STORAGE_KEYS.VALIDACOES, JSON.stringify({}));
+    this.clearAllData();
   },
 };

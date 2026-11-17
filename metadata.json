@@ -1,6 +1,6 @@
 {
-  "name": "Remix Metaloespo",
-  "description": "Imported from GitHub: albertometaloespo-lang/Metaloespo",
+  "name": "Metaloespo - Registo de Horas",
+  "description": "Aplicação móvel para registar as horas trabalhadas dos colaboradores por obra e por dia, com suporte a múltiplas obras diárias e relatórios.",
   "requestFramePermissions": [],
   "majorCapabilities": [
     "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"

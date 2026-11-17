@@ -43,10 +43,12 @@ export default function App() {
     StorageService.getValidacoes()
   );
 
-  // Perfil do Utilizador: padrão 'colaborador' (acesso apenas ao registo de horas)
-  const [userRole, setUserRole] = useState<UserRole>(() =>
-    StorageService.isAdminMode() ? 'administrador' : 'colaborador'
-  );
+  // Perfil do Utilizador: se não houver colaboradores ou se o modo admin estiver ativo, inicia como 'administrador'
+  const [userRole, setUserRole] = useState<UserRole>(() => {
+    if (StorageService.isAdminMode()) return 'administrador';
+    const cols = StorageService.getColaboradores();
+    return cols.length === 0 ? 'administrador' : 'colaborador';
+  });
 
   // Identidade do Colaborador com sessão iniciada (acesso exclusivo às suas horas)
   const [currentWorkerId, setCurrentWorkerId] = useState<string | null>(() =>
@@ -474,23 +476,47 @@ export default function App() {
     });
   };
 
-  // Repor dados
-  const handleResetData = () => {
+  // COMANDO ADMINISTRADOR: Limpar Colaboradores e Obras
+  const handleClearColaboradoresEObras = () => {
     setConfirmDialog({
       isOpen: true,
-      title: 'Repor Dados de Demonstração',
+      title: 'Limpar Colaboradores e Obras',
       message:
-        'Isto irá repor as obras, colaboradores e registos para os valores de exemplo. Deseja continuar?',
+        'Tem a certeza de que deseja apagar permanentemente todos os colaboradores e obras da aplicação? Os registos de horas também serão limpos.',
       onConfirm: () => {
-        StorageService.resetAllData();
+        StorageService.clearAllData();
+        setColaboradores([]);
+        setObras([]);
+        setRegistos([]);
+        setValidacoes({});
+        setCurrentWorkerId(null);
+        setUserRole('administrador');
+        StorageService.setAdminMode(true);
+        setConfirmDialog((prev) => ({ ...prev, isOpen: false }));
+        autoSyncToDrive([], [], []);
+      },
+    });
+  };
+
+  // Carregar dados de demonstração (opcional)
+  const handleLoadDemoData = () => {
+    setConfirmDialog({
+      isOpen: true,
+      title: 'Carregar Dados de Demonstração',
+      message:
+        'Deseja carregar as obras e colaboradores de exemplo para testar a aplicação?',
+      onConfirm: () => {
+        StorageService.loadDemoData();
         setColaboradores(StorageService.getColaboradores());
         setObras(StorageService.getObras());
-        setRegistos(StorageService.getRegistos());
-        setValidacoes(StorageService.getValidacoes());
+        setRegistos([]);
+        setValidacoes({});
         setConfirmDialog((prev) => ({ ...prev, isOpen: false }));
       },
     });
   };
+
+  const handleResetData = handleClearColaboradoresEObras;
 
   // Autenticação Google com Configuração Automática da Base de Dados Central no Google Drive
   const handleSignIn = async () => {
@@ -813,6 +839,8 @@ export default function App() {
             validacoes={validacoes}
             onResetData={handleResetData}
             onClearAllRegistos={handleClearAllRegistos}
+            onClearColaboradoresEObras={handleClearColaboradoresEObras}
+            onLoadDemoData={handleLoadDemoData}
             onOpenMobileModal={() => setIsMobileModalOpen(true)}
           />
         )}

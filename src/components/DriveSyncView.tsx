@@ -35,6 +35,8 @@ interface DriveSyncViewProps {
   onPushToDrive?: () => Promise<void>;
   onResetData: () => void;
   onClearAllRegistos?: () => void;
+  onClearColaboradoresEObras?: () => void;
+  onLoadDemoData?: () => void;
   onOpenMobileModal?: () => void;
 }
 
@@ -53,6 +55,8 @@ export const DriveSyncView: React.FC<DriveSyncViewProps> = ({
   onPushToDrive,
   onResetData,
   onClearAllRegistos,
+  onClearColaboradoresEObras,
+  onLoadDemoData,
   onOpenMobileModal,
 }) => {
   const [isCreating, setIsCreating] = useState(false);
@@ -491,9 +495,14 @@ export const DriveSyncView: React.FC<DriveSyncViewProps> = ({
       )}
 
       {/* CARD 4: GESTÃO DE DADOS (LIMPEZA E REPOSIÇÃO) */}
-      <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-3">
+      <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-4">
+        <div>
+          <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Gestão e Limpeza de Dados</h3>
+          <p className="text-[11px] text-slate-500">Controlo de dados locais e registos da aplicação</p>
+        </div>
+
         {onClearAllRegistos && (
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-slate-100">
             <div>
               <h4 className="text-xs font-bold text-red-700">Limpar Registos de Horas</h4>
               <p className="text-[11px] text-slate-500">
@@ -505,24 +514,44 @@ export const DriveSyncView: React.FC<DriveSyncViewProps> = ({
               className="flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-bold rounded-xl text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 transition-colors cursor-pointer min-h-[40px] shrink-0"
             >
               <Trash2 className="w-3.5 h-3.5 text-red-600" />
-              <span>Limpar Todos os Registos ({registos.length})</span>
+              <span>Limpar Registos ({registos.length})</span>
             </button>
           </div>
         )}
 
-        <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between gap-3">
-          <div>
-            <h4 className="text-xs font-bold text-slate-800">Dados de Demonstração</h4>
-            <p className="text-[11px] text-slate-500">Repor os dados de exemplo de obras e colaboradores</p>
+        {onClearColaboradoresEObras && (
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-slate-100">
+            <div>
+              <h4 className="text-xs font-bold text-red-700">Limpar Colaboradores e Obras</h4>
+              <p className="text-[11px] text-slate-500">
+                Eliminar a lista de trabalhadores ({colaboradores.length}) e obras ({obras.length})
+              </p>
+            </div>
+            <button
+              onClick={onClearColaboradoresEObras}
+              className="flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-bold rounded-xl text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 transition-colors cursor-pointer min-h-[40px] shrink-0"
+            >
+              <Trash2 className="w-3.5 h-3.5 text-red-600" />
+              <span>Limpar Equipa e Obras</span>
+            </button>
           </div>
-          <button
-            onClick={onResetData}
-            className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
-          >
-            <RotateCcw className="w-3.5 h-3.5" />
-            <span>Repor</span>
-          </button>
-        </div>
+        )}
+
+        {onLoadDemoData && (
+          <div className="flex items-center justify-between gap-3 pt-3 border-t border-slate-100">
+            <div>
+              <h4 className="text-xs font-bold text-slate-800">Carregar Dados de Exemplo</h4>
+              <p className="text-[11px] text-slate-500">Carregar obras e colaboradores de demonstração</p>
+            </div>
+            <button
+              onClick={onLoadDemoData}
+              className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Carregar Exemplo</span>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* MODAL: SELETOR DE FOLHAS DO GOOGLE DRIVE */}

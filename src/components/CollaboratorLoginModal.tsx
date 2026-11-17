@@ -113,51 +113,60 @@ export const CollaboratorLoginModal: React.FC<CollaboratorLoginModalProps> = ({
                   Escolha o seu perfil ({colaboradores.filter((c) => c.ativo).length} ativos)
                 </span>
                 <div className="grid grid-cols-1 gap-2">
-                  {colaboradores
-                    .filter((c) => c.ativo)
-                    .map((col) => {
-                      const isCurrent = currentWorkerId === col.id;
-                      return (
-                        <button
-                          key={col.id}
-                          type="button"
-                          onClick={() => handleChooseWorker(col)}
-                          className={`flex items-center justify-between p-3 rounded-2xl border text-left transition-all ${
-                            isCurrent
-                              ? 'border-amber-500 bg-amber-50/60 ring-2 ring-amber-400/20'
-                              : 'border-slate-200 hover:border-amber-300 hover:bg-slate-50'
-                          }`}
-                        >
-                          <div className="flex items-center gap-3">
-                            <div
-                              className="w-10 h-10 rounded-2xl flex items-center justify-center text-white font-bold text-sm shadow-sm"
-                              style={{ backgroundColor: col.cor }}
-                            >
-                              {col.nome.charAt(0)}
-                            </div>
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <span className="font-semibold text-slate-800 text-sm">
-                                  {col.nome}
-                                </span>
-                                {isCurrent && (
-                                  <span className="text-[10px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full">
-                                    Ativo
-                                  </span>
-                                )}
+                  {colaboradores.filter((c) => c.ativo).length === 0 ? (
+                    <div className="p-6 text-center border-2 border-dashed border-slate-200 rounded-2xl space-y-2">
+                      <p className="text-xs font-bold text-slate-700">Nenhum colaborador registado</p>
+                      <p className="text-[11px] text-slate-500">
+                        Não existem colaboradores na equipa. Aceda como Administrador para cadastrar trabalhadores.
+                      </p>
+                    </div>
+                  ) : (
+                    colaboradores
+                      .filter((c) => c.ativo)
+                      .map((col) => {
+                        const isCurrent = currentWorkerId === col.id;
+                        return (
+                          <button
+                            key={col.id}
+                            type="button"
+                            onClick={() => handleChooseWorker(col)}
+                            className={`flex items-center justify-between p-3 rounded-2xl border text-left transition-all ${
+                              isCurrent
+                                ? 'border-amber-500 bg-amber-50/60 ring-2 ring-amber-400/20'
+                                : 'border-slate-200 hover:border-amber-300 hover:bg-slate-50'
+                            }`}
+                          >
+                            <div className="flex items-center gap-3">
+                              <div
+                                className="w-10 h-10 rounded-2xl flex items-center justify-center text-white font-bold text-sm shadow-sm"
+                                style={{ backgroundColor: col.cor }}
+                              >
+                                {col.nome.charAt(0)}
                               </div>
-                              <span className="text-xs text-slate-500 line-clamp-1">
-                                {col.funcao}
-                              </span>
+                              <div>
+                                <div className="flex items-center gap-2">
+                                  <span className="font-semibold text-slate-800 text-sm">
+                                    {col.nome}
+                                  </span>
+                                  {isCurrent && (
+                                    <span className="text-[10px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full">
+                                      Ativo
+                                    </span>
+                                  )}
+                                </div>
+                                <span className="text-xs text-slate-500 line-clamp-1">
+                                  {col.funcao}
+                                </span>
+                              </div>
                             </div>
-                          </div>
-                          <div className="flex items-center gap-2 text-slate-400">
-                            <KeyRound className="w-4 h-4 text-slate-300" />
-                            <ChevronRight className="w-4 h-4" />
-                          </div>
-                        </button>
-                      );
-                    })}
+                            <div className="flex items-center gap-2 text-slate-400">
+                              <KeyRound className="w-4 h-4 text-slate-300" />
+                              <ChevronRight className="w-4 h-4" />
+                            </div>
+                          </button>
+                        );
+                      })
+                  )}
                 </div>
               </div>
 

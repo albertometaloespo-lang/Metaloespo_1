@@ -199,6 +199,16 @@ export const WorkerLogModal: React.FC<WorkerLogModalProps> = ({
             )}
           </div>
 
+          {activeObras.length === 0 && (
+            <div className="p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-start gap-2.5">
+              <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+              <div>
+                <strong className="block font-bold">Sem obras ativas disponíveis</strong>
+                Não existem obras em curso para registar horas. Por favor, aceda ao separador "Obras" para cadastrar estaleiros ou postos de trabalho antes de registar o ponto.
+              </div>
+            </div>
+          )}
+
           {allocations.length === 0 ? (
             <div className="p-6 text-center border-2 border-dashed border-slate-200 rounded-xl bg-slate-50/50">
               <p className="text-xs text-slate-500 mb-3">Nenhuma obra registada neste dia.</p>

@@ -120,7 +120,20 @@ export const TeamView: React.FC<TeamViewProps> = ({
 
       {/* Lista de Colaboradores */}
       <div className="space-y-2.5">
-        {colaboradores.map((col) => {
+        {colaboradores.length === 0 ? (
+          <div className="p-8 rounded-2xl bg-white border border-dashed border-slate-200 text-center space-y-3">
+            <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
+              <Users className="w-6 h-6" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-slate-800">Nenhum colaborador na equipa</p>
+              <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+                Clique no botão <strong className="text-slate-800">+ Novo Colaborador</strong> acima para cadastrar os trabalhadores e gerar os respetivos PINs de acesso.
+              </p>
+            </div>
+          </div>
+        ) : (
+          colaboradores.map((col) => {
           // Total de horas deste colaborador este mês
           const monthRegistos = registos.filter(
             (r) => r.colaboradorId === col.id && r.data.startsWith(currentMonthPrefix)
@@ -229,7 +242,8 @@ export const TeamView: React.FC<TeamViewProps> = ({
               </div>
             </div>
           );
-        })}
+        })
+      )}
       </div>
 
       {/* Modal Adicionar / Editar Colaborador */}

@@ -178,6 +178,20 @@ export const BatchObraLogModal: React.FC<BatchObraLogModalProps> = ({
         )}
 
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4">
+          {(activeObras.length === 0 || colaboradores.length === 0) && (
+            <div className="p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-start gap-2.5">
+              <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+              <div>
+                <strong className="block font-bold">Aviso de Configuração</strong>
+                {activeObras.length === 0 && colaboradores.length === 0
+                  ? 'Não existem obras ativas nem colaboradores cadastrados. Adicione obras e colaboradores antes de efetuar registos em lote.'
+                  : activeObras.length === 0
+                  ? 'Não existem obras em curso ativas para registar horas. Crie ou ative uma obra primeiro.'
+                  : 'Não existem colaboradores cadastrados na equipa.'}
+              </div>
+            </div>
+          )}
+
           {/* Obra selector */}
           <div>
             <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
@@ -186,15 +200,19 @@ export const BatchObraLogModal: React.FC<BatchObraLogModalProps> = ({
             <div className="relative">
               <select
                 value={selectedObraId}
-                disabled={isLocked}
+                disabled={isLocked || activeObras.length === 0}
                 onChange={(e) => handleObraChange(e.target.value)}
                 className="w-full text-sm font-semibold rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-slate-900 shadow-2xs focus:border-amber-500 focus:outline-hidden min-h-[44px] disabled:bg-slate-100"
               >
-                {activeObras.map((o) => (
-                  <option key={o.id} value={o.id}>
-                    {o.codigo} - {o.nome} ({o.cliente})
-                  </option>
-                ))}
+                {activeObras.length === 0 ? (
+                  <option value="">Sem obras ativas disponíveis</option>
+                ) : (
+                  activeObras.map((o) => (
+                    <option key={o.id} value={o.id}>
+                      {o.codigo} - {o.nome} ({o.cliente})
+                    </option>
+                  ))
+                )}
               </select>
             </div>
           </div>

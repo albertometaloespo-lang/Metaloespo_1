@@ -132,7 +132,20 @@ export const ObrasView: React.FC<ObrasViewProps> = ({
 
       {/* Obras Grid / List */}
       <div className="space-y-3">
-        {filteredObras.map((obr) => {
+        {filteredObras.length === 0 ? (
+          <div className="p-8 rounded-2xl bg-white border border-dashed border-slate-200 text-center space-y-3">
+            <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
+              <Building2 className="w-6 h-6" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-slate-800">Nenhuma obra registada</p>
+              <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+                Clique no botão <strong className="text-slate-800">+ Nova Obra</strong> acima para criar um estaleiro ou projeto para a sua empresa.
+              </p>
+            </div>
+          </div>
+        ) : (
+          filteredObras.map((obr) => {
           // Total de horas acumuladas nesta obra em todo o histórico
           const obraRegistos = registos.filter((r) => r.obraId === obr.id);
           const totalHoras = obraRegistos.reduce(
@@ -217,7 +230,8 @@ export const ObrasView: React.FC<ObrasViewProps> = ({
               </div>
             </div>
           );
-        })}
+        })
+      )}
       </div>
 
       {/* Modal Adicionar / Editar Obra */}
